@@ -121,16 +121,17 @@ app.get("/student/:num", (req, res) => {
     }).catch((err) => {
         viewData.message = "Student not found"; // set a message if an error occurs
         console.error(err);
-    }).then(collegeData.getCourses)
-      .then((data) => {
-          viewData.courses = data; // store course data in viewData
-          // render the student view
-          res.render("student", { student: viewData.student, courses: viewData.courses });
-      }).catch((err) => {
-          viewData.coursesMessage = "no results"; // set a message if an error occurs
-          console.error(err);
-          res.render("student", { student: viewData.student, coursesMessage: viewData.coursesMessage });
-      });
+    }).then(() => {
+        return collegeData.getCourses();
+    }).then((data) => {
+        viewData.courses = data; // store course data in viewData
+        // render the student view
+        res.render("student", { student: viewData.student, courses: viewData.courses });
+    }).catch((err) => {
+        viewData.coursesMessage = "no results"; // set a message if an error occurs
+        console.error(err);
+        res.render("student", { student: viewData.student, coursesMessage: viewData.coursesMessage });
+    });
 });
 
 // POST route to update a student
