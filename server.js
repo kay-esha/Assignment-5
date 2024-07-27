@@ -44,6 +44,7 @@ app.engine('.hbs', exphbs.engine({
     }
 }));
 app.set('view engine', '.hbs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Middleware to set the active route
 app.use(function(req, res, next) {
