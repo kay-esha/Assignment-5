@@ -2,8 +2,8 @@ const fs = require("fs");
 
 class Data {
     constructor(students, courses) {
-        this.students = students;
-        this.courses = courses;
+        this.students = students || [];
+        this.courses = courses || [];
     }
 }
 
@@ -38,27 +38,8 @@ module.exports.getAllStudents = function () {
         }
 
         resolve(dataCollection.students);
-    })
-}
-
-module.exports.getTAs = function () {
-    return new Promise(function (resolve, reject) {
-        var filteredStudents = [];
-
-        for (let i = 0; i < dataCollection.students.length; i++) {
-            if (dataCollection.students[i].TA == true) {
-                filteredStudents.push(dataCollection.students[i]);
-            }
-        }
-
-        if (filteredStudents.length == 0) {
-            reject("query returned 0 results");
-            return;
-        }
-
-        resolve(filteredStudents);
     });
-};
+}
 
 module.exports.getCourses = function () {
     return new Promise((resolve, reject) => {
@@ -125,31 +106,17 @@ module.exports.addStudent = function (studentData) {
     });
 };
 
-// New method to get a course by ID
-module.exports.getCourseById = function (id) {
-    return new Promise((resolve, reject) => {
-        const course = dataCollection.courses.find(course => course.courseId == id);
-        if (course) {
-            resolve(course);
-        } else {
-            reject("query returned 0 results");
-        }
-    });
-};
-
-// New method to update student data
 module.exports.updateStudent = function (studentData) {
     return new Promise((resolve, reject) => {
-        const index = dataCollection.students.findIndex(student => student.studentNum == studentData.studentNum);
-        if (index !== -1) {
-            // Ensure TA property is set appropriately
-            studentData.TA = studentData.TA === undefined ? false : true;
-
-            // Update student data
-            dataCollection.students[index] = { ...dataCollection.students[index], ...studentData };
-            resolve();
-        } else {
-            reject("Student not found");
+        // Find the student by studentNum and update the student data
+        for (let i = 0; i < dataCollection.students.length; i++) {
+            if (dataCollection.students[i].studentNum == studentData.studentNum) {
+                dataCollection.students[i] = studentData;
+                resolve();
+                return;
+            }
         }
+
+        reject("Student not found");
     });
 };
